@@ -1,0 +1,57 @@
+/* Ẩn thanh cuộn cho các trình duyệt khác nhau */
+.hidden-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.hidden-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hidden {
+    overflow: auto;
+    max-height: 400px;
+}
+
+.scrollbar-hiddens {
+    overflow: auto;
+    max-height: 500px;
+}
+
+.scrollbar-hidden::-webkit-scrollbar,
+.scrollbar-hiddens::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hidden,
+.scrollbar-hiddens {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.no-spin {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"].no-spin::-webkit-inner-spin-button,
+input[type="number"].no-spin::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.truncate-lines,
+.truncate-line {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.truncate-lines {
+    -webkit-line-clamp: 3;
+}
+
+.truncate-line {
+    -webkit-line-clamp: 1;
+}
