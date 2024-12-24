@@ -16,6 +16,9 @@ export const signUpUser = async (formData: User) => {
 export const signInUser = async (email: string) => {
     try {
         const response = await axios.get(`${api}users?email=${email}`);
+        const user = response.data[0];
+        localStorage.setItem('userId', user.id);
+      localStorage.setItem('email', user.email);
         return response.data;
     } catch (error) {
         throw handleError(error);

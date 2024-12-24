@@ -8,6 +8,9 @@ import Button from '../components/common/Button';
 import { useShowPassword } from '../hooks/auth/useShowPassword';
 import { useSignInController } from '../hooks/auth/useSignInController';
 import FaceSignIn from '../components/FaceSignIn';
+import { User } from '../types/auth.types';
+import { signInSuccess } from '../states/userSlice';
+import { useDispatch } from 'react-redux';
 
 const SignIn = () => {
     const { loading, handleChange, handleSubmit } = useSignInController();
@@ -16,12 +19,14 @@ const SignIn = () => {
     const [isFaceLogin, setIsFaceLogin] = useState(false);
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleRememberMeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setRememberMe(e.target.checked);
     };
 
-    const handleFaceLoginSuccess = () => {
+    const handleFaceLoginSuccess = (user: User) => {
+        dispatch(signInSuccess(user));
         navigate('/home');
     };
 

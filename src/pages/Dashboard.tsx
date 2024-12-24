@@ -17,7 +17,8 @@ const Dashboard: React.FC = () => {
   const { products, loading, error, updateProduct, deleteProduct } = useProducts();
   const [selectedView, setSelectedView] = useState<string>('Home');
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [faceImageData, setFaceImageData] = useState<string | null>(null);  // State to hold captured face image
+  const [faceImageData, setFaceImageData] = useState<string | null>(null);
+  const [userId] = useState<string | null>(localStorage.getItem('userId')); // Lấy userId từ localStorage hoặc state quản lý
 
   const handleViewChange = (view: string) => {
     setSelectedView(view);
@@ -137,11 +138,8 @@ const Dashboard: React.FC = () => {
           )}
 
           {selectedView === 'Face setting' && (
-            <div className="mt-5">
-              <h2 className="text-xl font-semibold">Capture or Upload Face Image</h2>
-              
-              <FaceLogin onFaceCapture={handleFaceCapture} />
-  
+            <div className="mt-5 ml-28">              
+              <FaceLogin onFaceCapture={handleFaceCapture} userId={userId || "bcad"} />
               {faceImageData && (
                 <div className="mt-4">
                   <img

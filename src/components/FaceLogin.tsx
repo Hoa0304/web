@@ -5,16 +5,21 @@ import { useFaceCapture } from '../hooks/face/useFaceCapture';
 
 interface FaceLoginProps {
   onFaceCapture: (imageData: string) => void;
+  userId: string;
 }
 
-const FaceLogin: React.FC<FaceLoginProps> = ({ onFaceCapture }) => {
+const FaceLogin: React.FC<FaceLoginProps> = ({ onFaceCapture, userId }) => {
   const { videoRef } = useVideoStream();  // Lấy videoRef từ hook useVideoStream
   const canvasRef = useRef<HTMLCanvasElement>(null);  // Đối tượng canvas nếu cần
   const modelsLoaded = useFaceApi();
-  const { captureImage, captureCount, isCapturing, setIsCapturing } = useFaceCapture(onFaceCapture);
+  
+  // Truyền thêm userId vào useFaceCapture
+  const { captureImage, captureCount, isCapturing, setIsCapturing } = useFaceCapture(onFaceCapture, userId);
 
-  // State để hiển thị thông báo thành công khi đủ 10 tấm ảnh
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [isCapturingManually, setIsCapturingManually] = useState(false); // State for manual control
+
+  // Dừng camera khi đã chụp đủ ảnh
   const stopCamera = () => {
     const stream = videoRef.current?.srcObject as MediaStream;
     const tracks = stream?.getTracks();
@@ -22,7 +27,20 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ onFaceCapture }) => {
       tracks.forEach(track => track.stop()); // Dừng tất cả các track trong stream
     }
   };
+
+  const handleStartCapture = () => {
+    setIsCapturingManually(true);
+    setShowSuccessMessage(false);
+  };
+
+  const handleStopCapture = () => {
+    setIsCapturingManually(false);
+    stopCamera();
+  };
+
   useEffect(() => {
+    if (!isCapturingManually) return;
+
     const interval = setInterval(() => {
       if (captureCount < 50 && modelsLoaded && !isCapturing) {
         setIsCapturing(true);
@@ -36,19 +54,36 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ onFaceCapture }) => {
     }, 600);
 
     return () => clearInterval(interval);
-  }, [captureCount, modelsLoaded, isCapturing]);
+  }, [captureCount, modelsLoaded, isCapturing, isCapturingManually]);
 
   return (
     <div>
       <video ref={videoRef} autoPlay playsInline width="400" height="300" />
       <canvas ref={canvasRef} style={{ display: 'none' }} />
       
-      {/* Hiển thị thông báo khi đã chụp đủ 10 tấm ảnh */}
       {showSuccessMessage && (
         <div style={{ color: 'green', fontSize: '18px', marginTop: '20px' }}>
           Chụp ảnh thành công! Bạn đã hoàn thành.
         </div>
       )}
+      
+      <div className='mt-10'>
+        <button 
+          onClick={handleStartCapture} 
+          disabled={isCapturingManually || captureCount >= 50}
+          className='rounded-full bg-gradientEnd text-primary p-3 mx-auto font-medium'
+        >
+          Start
+        </button>
+        
+        <button 
+          onClick={handleStopCapture} 
+          disabled={!isCapturingManually}
+          className='rounded-full bg-secondary text-primary p-3 font-medium mx-auto ml-5'
+        >
+          Stop
+        </button>
+      </div>
     </div>
   );
 };
