@@ -44,11 +44,13 @@ const FaceSignIn: React.FC<FaceSignInProps> = ({ onLoginSuccess }) => {
           const user = await response.json();
           onLoginSuccess(user);
           toast.success("Login successful!");
-          
           navigate('/home');
         }
       } else {
         console.log("No faces detected.");
+        stopCamera();
+        toast.error("No face detected, redirecting...");
+        navigate('/');
       }
     } else {
       console.log("No descriptors found or models not loaded yet.");
